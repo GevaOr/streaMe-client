@@ -7,10 +7,11 @@ import { Link } from "react-router-dom";
 import { AppBar } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
+
 import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
+// import InputBase from "@material-ui/core/InputBase";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import SearchIcon from "@material-ui/icons/Search";
+// import SearchIcon from "@material-ui/icons/Search";
 // import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "block",
     },
+    // textAlign: "center",
+    color: "rgba(255, 255, 255, 0.7)",
+    textShadow: "0 0 30px purple",
   },
   search: {
     position: "relative",
@@ -78,16 +82,14 @@ function Nav() {
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" className={classes.logoIcon}>
-            <Link href="/">
+            <Link to="/">
               <img src={logo} width="75" />
             </Link>
           </IconButton>
-          <Typography
-            className={classes.title}
-            variant="h6"
-            noWrap
-          ></Typography>
-          <div className={classes.search}>
+          <Typography className={classes.title} variant="h6" noWrap>
+            Just play.
+          </Typography>
+          {/* <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -99,7 +101,7 @@ function Nav() {
               }}
               inputProps={{ "aria-label": "search" }}
             />
-          </div>
+          </div> */}
         </Toolbar>
       </AppBar>
     </div>

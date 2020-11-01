@@ -8,6 +8,6 @@
   background-image: url("./media/axiom-pattern.png");
 }
 
-/* body{
-  background-color: rgba(137, 47, 255, 0.404);
-} */
+.main-wrapper {
+  padding: 50px;
+}
