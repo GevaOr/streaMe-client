@@ -5,6 +5,8 @@ import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 360,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
     textDecoration: "none",
+    borderRadius: "5px",
   },
   section: {
     width: "80%",
@@ -23,12 +26,15 @@ const useStyles = makeStyles((theme) => ({
   listItem: {
     textAlign: "center",
   },
+  link: {
+    textDecoration: "none",
+    color: "black",
+  },
 }));
 
 function Album({ match }) {
-  const [albumId, setAlbumId] = useState(match.params.id)[0];
+  const albumId = useState(match.params.id)[0];
   const [albumData, setAlbumData] = useState(null);
-  const [songsData, setSongsData] = useState(null);
 
   const classes = useStyles();
 
@@ -36,43 +42,12 @@ function Album({ match }) {
     axios
       .get(`/album/${albumId}`)
       .then((response) => {
-        setAlbumData(response.data[0]);
-        getSongsData();
+        setAlbumData(response.data);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
-
-  const getSongsData = () => {
-    axios
-      .get(`/album/${albumId}/songs`)
-      .then((responseList) => {
-        for (let item of responseList.data) {
-          axios
-            .get(`/song/${item.song_id}`)
-            .then((songResponse) => {
-              let currentSong = {
-                id: item.song_id,
-                youtubeId: songResponse.data[0].youtube_id,
-              };
-              if (songsData) {
-                let currentData = songsData;
-                currentData.push(currentSong);
-                setSongsData(currentData);
-              } else {
-                setSongsData([currentSong]);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  }, [albumId]);
 
   return (
     <Fragment>
@@ -82,29 +57,41 @@ function Album({ match }) {
             <Typography color="textPrimary" variant="h2">
               {albumData.title}
             </Typography>
-            <Typography color="textPrimary" variant="h4">
-              {albumData.artist_name}
-            </Typography>
+            <Link
+              className={classes.link}
+              to={`/artist/${albumData.artist_id}`}
+            >
+              <Typography color="textPrimary" variant="h4">
+                {albumData.artist_name}
+              </Typography>
+            </Link>
           </div>
           <div className={classes.section}>
-            <img src={albumData.cover_img} width="600px" />
+            <img
+              src={albumData.cover_img}
+              alt={albumData.title}
+              width="600px"
+            />
           </div>
-          {songsData && (
+          {albumData.songs && (
             <div className={classes.section}>
               <Typography color="textPrimary" variant="h4">
                 Songs
               </Typography>
               <List component="nav" className={classes.root}>
-                {songsData.map((song) => {
-                  let embUrl = `https://www.youtube.com/embed/${song.youtubeId}`;
+                {albumData.songs.map((song) => {
                   return (
-                    <ListItem key={song.id}>
-                      <iframe
-                        src={embUrl}
-                        allowFullScreen
-                        frameBorder="0"
-                      ></iframe>
-                    </ListItem>
+                    <Link
+                      className={classes.link}
+                      to={`/song/${song.id}?album=${albumData.id}`}
+                      key={song.id}
+                    >
+                      <ListItem button>
+                        <ListItemText
+                          primary={`${song.track_num}. ${song.title}`}
+                        />
+                      </ListItem>
+                    </Link>
                   );
                 })}
               </List>

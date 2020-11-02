@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 360,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
     textDecoration: "none",
+    borderRadius: "5px",
   },
   section: {
     width: "80%",
@@ -31,83 +32,22 @@ const useStyles = makeStyles((theme) => ({
 function Artist({ match }) {
   const artistId = useState(match.params.id)[0];
   const [artistData, setArtistData] = useState(null);
-  const [albumsData, setAlbumsData] = useState(null);
-  const [songsData, setSongsData] = useState(null);
 
   const classes = useStyles();
 
   useEffect(() => {
-    axios
-      .get(`/artist/${artistId}`)
-      .then((response) => {
-        setArtistData(response.data[0]);
-        getAlbumsData();
-        getSongsData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  const getAlbumsData = () => {
-    axios
-      .get(`/artist/${artistId}/albums`)
-      .then((responseList) => {
-        for (let item of responseList.data) {
-          axios
-            .get(`/album/${item.album_id}`)
-            .then((albumResponse) => {
-              let currentAlbum = {
-                id: item.album_id,
-                title: albumResponse.data[0].title,
-              };
-              if (albumsData) {
-                let currentData = albumsData;
-                currentData.push(currentAlbum);
-                setAlbumsData(currentData);
-              } else {
-                setAlbumsData([currentAlbum]);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const getSongsData = () => {
-    axios
-      .get(`/artist/${artistId}/songs`)
-      .then((responseList) => {
-        for (let item of responseList.data) {
-          axios
-            .get(`/song/${item.song_id}`)
-            .then((songResponse) => {
-              let currentSong = {
-                id: item.song_id,
-                youtubeId: songResponse.data[0].youtube_id,
-              };
-              if (songsData) {
-                let currentData = songsData;
-                currentData.push(currentSong);
-                setSongsData(currentData);
-              } else {
-                setSongsData([currentSong]);
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    if (!artistData) {
+      axios
+        .get(`/artist/${artistId}`)
+        .then((response) => {
+          let data = response.data;
+          setArtistData(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [artistData, artistId]);
 
   return (
     <Fragment>
@@ -117,15 +57,19 @@ function Artist({ match }) {
             <Typography color="textPrimary" variant="h2">
               {artistData.artist_name}
             </Typography>
-            <img src={artistData.cover_img} width="600px" />
+            <img
+              src={artistData.cover_img}
+              alt={artistData.artist_name}
+              width="600px"
+            />
           </div>
-          {albumsData && (
+          {artistData.albums.length > 0 && (
             <div className={classes.section}>
               <Typography color="textPrimary" variant="h4">
                 Albums
               </Typography>
               <List component="nav" className={classes.root}>
-                {albumsData.map((album) => {
+                {artistData.albums.map((album) => {
                   return (
                     <Link
                       style={{ textDecoration: "none", color: "black" }}
@@ -141,23 +85,23 @@ function Artist({ match }) {
               </List>
             </div>
           )}
-          {songsData && (
+          {artistData.songs.length > 0 && (
             <div className={classes.section}>
               <Typography color="textPrimary" variant="h4">
                 Songs
               </Typography>
               <List component="nav" className={classes.root}>
-                {songsData.map((song) => {
-                  let embUrl = `https://www.youtube.com/embed/${song.youtubeId}`;
+                {artistData.songs.map((song) => {
                   return (
-                    <ListItem key={song.id}>
-                      <iframe
-                        src={embUrl}
-                        allowFullScreen
-                        frameBorder="0"
-                      ></iframe>
-                      {/* <ListItemText primary={song.title} /> */}
-                    </ListItem>
+                    <Link
+                      style={{ textDecoration: "none", color: "black" }}
+                      to={`/song/${song.id}?artist=${artistId}`}
+                      key={song.id}
+                    >
+                      <ListItem button>
+                        <ListItemText primary={song.title} />
+                      </ListItem>
+                    </Link>
                   );
                 })}
               </List>

@@ -35,18 +35,18 @@ function Home() {
   const [topArtists, setTopArtists] = useState(null);
   const [topAlbums, setTopAlbums] = useState(null);
   const [topPlaylists, setTopPlaylists] = useState(null);
-  const [topCategories, setTopCategories] = useState([
+  const topCategories = useState([
     "top_songs",
     "top_albums",
     "top_artists",
     "top_playlists",
-  ]);
+  ])[0];
 
   useEffect(() => {
     for (let category of topCategories) {
       getTopMedia(category);
     }
-  }, []);
+  }, [topCategories]);
 
   const getTopMedia = (category) => {
     let url = `/${category}`;
@@ -65,6 +65,8 @@ function Home() {
             return;
           case "top_playlists":
             setTopPlaylists(response.data);
+            return;
+          default:
             return;
         }
       })
@@ -160,7 +162,7 @@ function Home() {
                   type="playlist"
                   imgUrl={playlist.cover_img}
                   title={playlist.title}
-                  creator={playlist.created_by}
+                  creator={null}
                   createdAt={playlist.created_at}
                 />
               );

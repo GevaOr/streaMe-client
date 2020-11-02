@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React from "react";
 
 import "../App.css";
 import logo from "../media/streame_logo.png";
@@ -7,12 +7,8 @@ import { Link } from "react-router-dom";
 import { AppBar } from "@material-ui/core";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-
 import Typography from "@material-ui/core/Typography";
-// import InputBase from "@material-ui/core/InputBase";
 import { fade, makeStyles } from "@material-ui/core/styles";
-// import SearchIcon from "@material-ui/icons/Search";
-// import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +20,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "block",
     },
-    // textAlign: "center",
     color: "rgba(255, 255, 255, 0.7)",
     textShadow: "0 0 30px purple",
   },
@@ -56,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
@@ -75,33 +69,18 @@ const useStyles = makeStyles((theme) => ({
 function Nav() {
   const classes = useStyles();
 
-  // useEffect(() => {}, []); // axios
-
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" className={classes.logoIcon}>
             <Link to="/">
-              <img src={logo} width="75" />
+              <img src={logo} alt="logo" width="75" />
             </Link>
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
             Just play.
           </Typography>
-          {/* <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div> */}
         </Toolbar>
       </AppBar>
     </div>
